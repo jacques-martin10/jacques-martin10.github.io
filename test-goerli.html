@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test page Metamask Goerli</title>
+
+<div id="metamask">
+<h1>Is metamask installed?</h1>
+<span>
+To install metamask, see <a href="https://metamask.zendesk.com/hc/en-us/articles/360015489531-Getting-started-with-MetaMask">https://metamask.zendesk.com/hc/en-us/articles/360015489531-Getting-started-with-MetaMask</a> and <a href="https://www.youtube.com/watch?v=Af_lQ1zUnoM">https://www.youtube.com/watch?v=Af_lQ1zUnoM</a>.
+</span>
+</div>
+
+<div id="goerli">
+<h1>Is testnet goerli activated?</h1>
+<span>
+1) go to Settings >> Advanced, and then activate "Show test networks". 
+2) select "Goerli Test Network".
+ 
+see <a href="https://community.metamask.io/t/unlock-testnets-so-i-can-move-hide-remove-them/7892">https://community.metamask.io/t/unlock-testnets-so-i-can-move-hide-remove-them/7892k</a>
+and <a href="https://www.youtube.com/watch?v=bCfIrqSenDQ">https://www.youtube.com/watch?v=bCfIrqSenDQ</a>
+
+</span>
+</div>
+
+
+<div id="faucet">
+<h1>Do I have enough GOERLI_ETH?</h1>
+<span>
+Visit a faucet to get some GOERLI_ETH, eg <a href="https://fauceth.komputing.org/?chain=5">https://fauceth.komputing.org/?chain=5</a>.
+
+Documentation: 
+see <a href="https://devtonight.com/posts/metamask-testnet-wallet-setup-for-blockchain-development">https://devtonight.com/posts/metamask-testnet-wallet-setup-for-blockchain-development</a>
+and <a href="https://www.youtube.com/watch?v=ofEaKYVFa_I">https://www.youtube.com/watch?v=ofEaKYVFa_I</a>
+
+</span>
+</div>
+
+<div id="final">Refresh the page to try again!</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@truffle/contract@latest/dist/truffle-contract.js"></script>
+    <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+    <script>
+function test() {
+
+var isOK = true;
+
+// do we have metamask
+if (! window.ethereum) {
+  $('#metamask').css('background-color','#ffcccb');
+  isOK = isOK && false;
+} else {
+  $('#metamask').css('background-color','green');
+  $('#metamask>span').css('display','none');
+}
+
+// do we have goerli
+if (window.ethereum.networkVersion != "5" ) {
+  $('#goerli').css('background-color','#ffcccb');
+  isOK = isOK && false;  
+} else {
+  $('#goerli').css('background-color','green');
+  $('#goerli>span').css('display','none');
+}
+
+const web3=new Web3(window.ethereum);
+const nofaucet = () => {  $('#faucet').css('background-color','#ffcccb');  throw new Error('Oh no!');};
+
+// check balance
+window.ethereum.enable().then(() => {return  web3.eth.getAccounts().then((x) => {return x[0];})
+  .then((account)=>{new web3.eth.getBalance(account).then(web3.utils.fromWei, nofaucet).then((balance)=>{ if (balance>0.1){$('#faucet').css('background-color','green');$('#faucet>span').css('display','none');} else nofaucet();}, nofaucet).then(()=>{$("#final").html("🎉️🎉️🎉️🎉️🎉️🎉️🎉️ Congratulations, you're all set!");});
+  }, nofaucet)});
+
+// new Promise(window.ethereum.enable).then(() => {return web3.eth.getAccounts()[0];}).then(alert);
+//web3.eth.getBalance(accounts[0]).then(alert);
+
+} // end function
+
+$(window).on('load',() => {
+        test();
+});   
+    </script>
+  </body>
+</html>
